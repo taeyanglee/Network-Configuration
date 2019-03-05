@@ -11,13 +11,18 @@ def data2graph(data_path) :
     Returns:
         Add nodes or link in nx.Graph instance
     """
+    # COMMENT BEGIN(2019/03/05)
+    # In the first line of the function comment, do not start with a space. 
+    # In the 'Returns' part, you should write what objects the function returns; for now, you have written what function does. This function returns Network, position tuple, so write about it: type and what does the variable contains. 
+    # If you write your thesis in Korean, it is recommended to write in Korean, since comments in your code will be re-used in the thesis. 
+    # COMMENT END(2019/03/05)
     
-
-
     # Network = nx.Graph()               
     Network = nx.MultiDiGraph()               
     fileDirectory = os.path.join(data_path,"JejuIsland_NODE.csv")
-
+    # COMMENT BEGIN(2019/03/05)
+    # when using print statement, I suggest to use quiet option so that you can choose whether to see the debug statements. 
+    # COMMENT END(2019/03/05)
     print("###"*30, "JejuIsland_NODE is configurated from here")    
     with open(fileDirectory, mode = 'r', encoding = 'utf-8-sig') as nodeData :
         # 한글이 들어있는 데이터에 대해서 아래와 같은 오류코드가 나오게 되지만
@@ -29,7 +34,7 @@ def data2graph(data_path) :
         # 이 부분에 대해서 최신 업데이트를 할 수 있도록, 웹크롤링 및 다운로드하는 방법에 대해서 추후 진행 가능        
         # 전처리를 ArcMap을 통해서 걷친 데이터를 가지고 옴.
         # ArcMap에서 Node에 X,Y Position을 추가하였고, 특정지역에 원하는 데이터만(jeju island) csv 형태로 꺼내옴
-
+        
         keysOfNodes = nodeData.readline().strip().split(',')
         print("\n", "---"*10, "keysOfNodes is following", "---"*35)
         print(keysOfNodes)
