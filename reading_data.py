@@ -4,12 +4,16 @@ import io
 import matplotlib.pyplot as plt
 from pprint import pprint
 
-def data2graph(data_path) :
+def data2graph(data_path,GraphType) :
     """ read the data from the data_path and generate graph instance considering the data indicates nodes or link   
     Args :
-        data_path : data path of data files                
+        data_path : data path of data files
+        GraphType : (GraphType,Network) = (1,MultiDiGraph())
+                                        = (2,MultiGraph())
+                                        = (3,DiGraph())
+                                        = (4,Graph())
     Returns:
-        Add nodes or link in nx.Graph instance
+        Add nodes and link in nx.Graph instance
     """
     # COMMENT BEGIN(2019/03/05)
     # In the first line of the function comment, do not start with a space. 
@@ -17,9 +21,17 @@ def data2graph(data_path) :
     # If you write your thesis in Korean, it is recommended to write in Korean, since comments in your code will be re-used in the thesis. 
     # COMMENT END(2019/03/05)
     
-    # Network = nx.Graph()               
-    Network = nx.MultiDiGraph()               
-    fileDirectory = os.path.join(data_path,"JejuIsland_NODE.csv")
+    
+    if GraphType == 1:
+        Network = nx.MultiDiGraph()
+    elif GraphType ==2 :
+        Network = nx.MultiDiGraph()
+    elif GraphType ==3 :
+        Network = nx.MultiDiGraph()
+    else :
+        Network = nx.MultiDiGraph()
+        
+    fileDirectory = os.path.join(data_path,"Jeju_Island_Node.csv")
     # COMMENT BEGIN(2019/03/05)
     # when using print statement, I suggest to use quiet option so that you can choose whether to see the debug statements. 
     # COMMENT END(2019/03/05)
@@ -41,53 +53,60 @@ def data2graph(data_path) :
         # print("---"*54)
         
         a = nodeData.readlines()
-        position =  dict()
+        # position =  dict()
         for idx, readLines in enumerate(a ) :
             # print("index is",idx,"readLines are", readLines)
             line = readLines.strip().split(',')
             node_dict = dict( zip (keysOfNodes, line) ) 
-            (nodeID, x, y )= (node_dict['NODE_ID'], node_dict['POINT_X'] , node_dict['POINT_Y'] )
+            (nodeID, x, y )= (node_dict['NODE_ID'], node_dict['X2'] , node_dict['Y2'] )
             Network.add_node(nodeID, pos = (x,y) )            
-            position[nodeID] = [x,y]
+            # position[nodeID] = [x,y]
 
-            for key, datum in zip(keysOfNodes, line):
-                Network.node[nodeID][key] = datum
+            # for key, datum in zip(keysOfNodes, line):
+                # nx.set_node_attributes(Network,key,datum)
+                # Network.node[nodeID][key] = datum
             # 이렇게 짜게 되면 Point_X와 Point_Y 의 데이터가 중첩되서 들어가지만, position을 사용하려면 어쩔수 없음.
             # 다른 방법으로 짜는 방법도 고려해 볼 것.
             
 
     print("total %d node is loaded to network."%(len(Network.node)))
     # print("\n network node is following")
-    print(Network.node)
+    # print(Network.node)
     print("###"*30, "JejuIsland_NODE is configurated")
     print("---"*54)
 
 
     # '''From here Link loading is begins '''
     
-    # print("\n"*3)
-    # print("###"*30, "JejuIsland_Link is configurated from here")
+    # # print("\n"*3)
+    # # print("###"*30, "JejuIsland_Link is configurated from here")
 
-    # fileDirectory = os.path.join(data_path,"JejuIsland_Link.csv")
+    # fileDirectory = os.path.join(data_path,"Jeju_Island_link.csv")
     # with open(fileDirectory, mode='r', encoding = 'utf-8-sig') as linkData :
         # keysOfLink = linkData.readline().strip().split(',')
-        # print("\n", "---"*10, "keysOfLink is following", "---"*35)
-        # print(keysOfLink)
-        # print("---"*54)
+        # print("\n", "---"*10, "keysOfLink is following", "---"*35); print(keysOfLink) ;print("---"*54)
 
-        # # LINK_ID, F_NODE, T_NODE
         # a = linkData.readlines()        
         # for idx, readLines in enumerate(a) :
             # # print("index is",idx,"readLines are", readLines)            
-            # line = readLines.strip().split(',')
+            # line = readLines.strip().split(',')            
             # Link_dict = dict( zip (keysOfLink, line) ) 
             # (LinkID,F_NODE, T_NODE ) = (Link_dict['LINK_ID'],Link_dict['F_NODE'],Link_dict['T_NODE'])
             # if (F_NODE in Network.node) and (T_NODE in Network.node) :
                     
                 # Network.add_edge(F_NODE,T_NODE,**Link_dict)
-                # # print(Link_dict)
+                # # print(Network.edges)
                 # # for key, datum in zip(keysOfLink, line):
-                    # # Network.add_edges[F_NODE][T_NODE][key] = datum
+                    # # # nx.set_edge_attributes(Network,key,datum)
+                    # # # Network.edge[F_NODE,T_NODE][key] = datum
+                    # # # Network.edge[F_NODE][T_NODE][key] = datum
+                    # # # Network.node[nodeID][key] = datum
+                    # # Network.add_edge(F_NODE, T_NODE, **Link_dict)
+                    
+        # # nx.set_edge_attributes(Network,key,datum)
+        # # print(Link_dict)
+        
+        # # print(Network.edges(data=True))
 
 
             # # Network.add_edge(F_NODE,T_NODE,**Link_dict)
@@ -103,35 +122,36 @@ def data2graph(data_path) :
     # print("###"*30, "JejuIsland_LINK is configurated")
     # print("---"*54)
 
-    return Network, position
-
-    
+    return Network
+    # , position
+   
     
     
     
 if __name__ == '__main__':
     # node and path data must be in the same route        
     data_path = '.\\data'    
-    (Network, position) = data2graph(data_path)
-    
+    Network = data2graph(data_path,1)    
     print(nx.info(Network))
-    plt.figure()    
+    # plt.figure()    
     pos = nx.get_node_attributes(Network,'pos')
-    f = open("positionOfNodes.txt",'w')
-    i = 1
-    for datum in pos :
-        f.write(datum)
-        if i %2 == 0 :             
-            f.write("\n")
-        else :
-            f.write("\t")
-        i += 1
+    # f = open("positionOfNodes.txt",'w')
+    # i = 1
+    # for datum in pos :
+        # f.write(datum)
+        # if i %2 == 0 :             
+            # f.write("\n")
+        # else :
+            # f.write("\t")
+        # i += 1
             
-    f.close
+    # f.close
     # print( pos)
     # nx.draw(Network, node_size=5,node_color='pink' )
-    # # nx.draw(Network, position, node_size=5,node_color='pink' )
-    # # # nx.draw(Network, position, edge_color='black',width=1,linewidths=1,node_size=50,node_color='pink' )
-    # plt.axis('on')
-
-    # plt.show()
+    nx.draw_networkx_nodes(Network, pos, node_size=10, alpha=1.0, 
+                       node_shape='o', node_color='red')
+    # nx.draw_networkx_edges(Network, pos, width=10, alpha=0.8, edge_color='crimson')
+    # nx.draw(Network, pos, node_size=10,node_color='blue' )
+    # # # # # nx.draw(Network, position, edge_color='black',width=1,linewidths=1,node_size=50,node_color='pink' )
+    plt.axis('on')
+    plt.show()
